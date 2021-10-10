@@ -1,7 +1,16 @@
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
+
+class User(BaseModel):
+    name: str
+    age: int
+
+class Book(BaseModel):
+    title: str
+    author: str
 
 
 @app.get("/")
@@ -23,4 +32,22 @@ def blog_comments(id: int):
             'id': id,
             'comments': ['Comment 1', 'Comment 2']
         }
-    } 
+    }
+
+@app.post('/user')
+def addUser(user: User = Body(...)):
+    return {
+        "user": user
+    }
+
+
+@app.post('/rent-book-v1')
+def rentBookV1(user: User, book: Book, importance: int = Body(...)):
+    # Need the Body syntax in the parametter to force it as the Request Body instead of 
+    # the path's query
+    
+    return {
+        "user": user,
+        "book": book,
+        "importance": importance
+    }
